@@ -1,20 +1,22 @@
 package ru.ifr0z.fabuserlocation.example
 
-import android.Manifest
-import android.content.pm.PackageManager
-import android.graphics.Color
+import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.graphics.Color.BLUE
 import android.graphics.PointF
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
+import android.support.v4.app.ActivityCompat.requestPermissions
+import android.support.v4.content.ContextCompat.checkSelfPermission
 import android.support.v7.app.AppCompatActivity
 import com.yandex.mapkit.Animation
+import com.yandex.mapkit.Animation.Type.SMOOTH
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.layers.ObjectEvent
 import com.yandex.mapkit.logo.Alignment
-import com.yandex.mapkit.logo.HorizontalAlignment
-import com.yandex.mapkit.logo.VerticalAlignment
+import com.yandex.mapkit.logo.HorizontalAlignment.LEFT
+import com.yandex.mapkit.logo.VerticalAlignment.BOTTOM
 import com.yandex.mapkit.map.CameraListener
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.CameraUpdateSource
@@ -22,7 +24,7 @@ import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
-import com.yandex.runtime.image.ImageProvider
+import com.yandex.runtime.image.ImageProvider.fromResource
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), UserLocationObjectListener, CameraListener {
@@ -46,30 +48,23 @@ class MainActivity : AppCompatActivity(), UserLocationObjectListener, CameraList
     }
 
     private fun checkPermission() {
-        val permissionACL =
-            ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-
-        val permissionAFL =
-            ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-
-        if (permissionACL != PackageManager.PERMISSION_GRANTED ||
-            permissionAFL != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
+        val permissionACL = checkSelfPermission(this, ACCESS_COARSE_LOCATION)
+        val permissionAFL = checkSelfPermission(this, ACCESS_FINE_LOCATION)
+        if (permissionACL != PERMISSION_GRANTED || permissionAFL != PERMISSION_GRANTED) {
+            requestPermissions(
                 this,
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ),
+                arrayOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION),
                 requestPermissionLocation
             )
-        } else onMapReady()
+        } else {
+            onMapReady()
+        }
     }
 
     override fun onRequestPermissionsResult(code: Int, strings: Array<String>, ints: IntArray) {
         when (code) {
             requestPermissionLocation -> {
-                if (ints[0] == PackageManager.PERMISSION_GRANTED) {
+                if (ints[0] == PERMISSION_GRANTED) {
                     onMapReady()
                 }
                 return
@@ -78,7 +73,7 @@ class MainActivity : AppCompatActivity(), UserLocationObjectListener, CameraList
     }
 
     private fun userInterface() {
-        val mapLogoAlignment = Alignment(HorizontalAlignment.LEFT, VerticalAlignment.BOTTOM)
+        val mapLogoAlignment = Alignment(LEFT, BOTTOM)
         map_v.map.logo.setAlignment(mapLogoAlignment)
 
         user_location_fab.setOnClickListener {
@@ -86,7 +81,9 @@ class MainActivity : AppCompatActivity(), UserLocationObjectListener, CameraList
                 cameraUserPosition()
 
                 followUserLocation = true
-            } else checkPermission()
+            } else {
+                checkPermission()
+            }
         }
     }
 
@@ -107,11 +104,11 @@ class MainActivity : AppCompatActivity(), UserLocationObjectListener, CameraList
         if (userLocationLayer.cameraPosition() != null) {
             routeStartLocation = userLocationLayer.cameraPosition()!!.target
             map_v.map.move(
-                CameraPosition(routeStartLocation, 16f, 0f, 0f),
-                Animation(Animation.Type.SMOOTH, 1f),
-                null
+                CameraPosition(routeStartLocation, 16f, 0f, 0f), Animation(SMOOTH, 1f), null
             )
-        } else map_v.map.move(CameraPosition(Point(0.0, 0.0), 16f, 0f, 0f))
+        } else {
+            map_v.map.move(CameraPosition(Point(0.0, 0.0), 16f, 0f, 0f))
+        }
     }
 
     override fun onCameraPositionChanged(
@@ -148,9 +145,9 @@ class MainActivity : AppCompatActivity(), UserLocationObjectListener, CameraList
     override fun onObjectAdded(userLocationView: UserLocationView) {
         setAnchor()
 
-        userLocationView.pin.setIcon(ImageProvider.fromResource(this, R.drawable.user_arrow))
-        userLocationView.arrow.setIcon(ImageProvider.fromResource(this, R.drawable.user_arrow))
-        userLocationView.accuracyCircle.fillColor = Color.BLUE
+        userLocationView.pin.setIcon(fromResource(this, R.drawable.user_arrow))
+        userLocationView.arrow.setIcon(fromResource(this, R.drawable.user_arrow))
+        userLocationView.accuracyCircle.fillColor = BLUE
     }
 
     override fun onObjectUpdated(p0: UserLocationView, p1: ObjectEvent) {}
