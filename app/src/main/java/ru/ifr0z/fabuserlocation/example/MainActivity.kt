@@ -1,6 +1,5 @@
 package ru.ifr0z.fabuserlocation.example
 
-import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.graphics.Color.BLUE
@@ -48,25 +47,23 @@ class MainActivity : AppCompatActivity(), UserLocationObjectListener, CameraList
     }
 
     private fun checkPermission() {
-        val permissionACL = checkSelfPermission(this, ACCESS_COARSE_LOCATION)
-        val permissionAFL = checkSelfPermission(this, ACCESS_FINE_LOCATION)
-        if (permissionACL != PERMISSION_GRANTED || permissionAFL != PERMISSION_GRANTED) {
-            requestPermissions(
-                this,
-                arrayOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION),
-                requestPermissionLocation
-            )
+        val permissionLocation = checkSelfPermission(this, ACCESS_FINE_LOCATION)
+        if (permissionLocation != PERMISSION_GRANTED) {
+            requestPermissions(this, arrayOf(ACCESS_FINE_LOCATION), requestPermissionLocation)
         } else {
             onMapReady()
         }
     }
 
-    override fun onRequestPermissionsResult(code: Int, strings: Array<String>, ints: IntArray) {
-        when (code) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<String>, grantResults: IntArray
+    ) {
+        when (requestCode) {
             requestPermissionLocation -> {
-                if (ints[0] == PERMISSION_GRANTED) {
+                if (grantResults[0] == PERMISSION_GRANTED) {
                     onMapReady()
                 }
+
                 return
             }
         }
@@ -172,6 +169,6 @@ class MainActivity : AppCompatActivity(), UserLocationObjectListener, CameraList
          * You can get it at the https://developer.tech.yandex.ru/ website.
          */
         const val mapKitApiKey = "your_api_key"
-        const val requestPermissionLocation = 34
+        const val requestPermissionLocation = 1
     }
 }
