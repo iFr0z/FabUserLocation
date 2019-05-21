@@ -5,9 +5,9 @@ import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.graphics.Color.BLUE
 import android.graphics.PointF
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat.requestPermissions
-import android.support.v4.content.ContextCompat.checkSelfPermission
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat.requestPermissions
+import androidx.core.content.ContextCompat.checkSelfPermission
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.Animation.Type.SMOOTH
 import com.yandex.mapkit.MapKitFactory
