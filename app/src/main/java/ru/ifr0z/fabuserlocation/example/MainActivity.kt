@@ -85,8 +85,9 @@ class MainActivity : AppCompatActivity(), UserLocationObjectListener, CameraList
     }
 
     private fun onMapReady() {
-        userLocationLayer = map_v.map.userLocationLayer
-        userLocationLayer.isEnabled = true
+        val mapKit = MapKitFactory.getInstance()
+        userLocationLayer = mapKit.createUserLocationLayer(map_v.mapWindow)
+        userLocationLayer.isVisible = true
         userLocationLayer.isHeadingEnabled = true
         userLocationLayer.setObjectListener(this)
 
