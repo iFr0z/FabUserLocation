@@ -16,9 +16,7 @@ import com.yandex.mapkit.layers.ObjectEvent
 import com.yandex.mapkit.logo.Alignment
 import com.yandex.mapkit.logo.HorizontalAlignment.LEFT
 import com.yandex.mapkit.logo.VerticalAlignment.BOTTOM
-import com.yandex.mapkit.map.CameraListener
-import com.yandex.mapkit.map.CameraPosition
-import com.yandex.mapkit.map.CameraUpdateSource
+import com.yandex.mapkit.map.*
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.mapkit.user_location.UserLocationObjectListener
@@ -114,7 +112,7 @@ class MainActivity : AppCompatActivity(), UserLocationObjectListener, CameraList
     }
 
     override fun onCameraPositionChanged(
-        p0: Map, p1: CameraPosition, p2: CameraUpdateSource, finish: Boolean
+        map: Map, cPos: CameraPosition, cUpd: CameraUpdateReason, finish: Boolean
     ) {
         if (finish) {
             if (followUserLocation) {
@@ -161,7 +159,7 @@ class MainActivity : AppCompatActivity(), UserLocationObjectListener, CameraList
     override fun onObjectRemoved(p0: UserLocationView) {}
 
     override fun onStop() {
-        map_v.onStop()
+        binding.mapView.onStop()
         MapKitFactory.getInstance().onStop()
         super.onStop()
     }
@@ -169,7 +167,7 @@ class MainActivity : AppCompatActivity(), UserLocationObjectListener, CameraList
     override fun onStart() {
         super.onStart()
         MapKitFactory.getInstance().onStart()
-        map_v.onStart()
+        binding.mapView.onStart()
     }
 
     companion object {
