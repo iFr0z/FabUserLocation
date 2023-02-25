@@ -24,9 +24,11 @@ import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
 import com.yandex.runtime.image.ImageProvider.fromResource
-import kotlinx.android.synthetic.main.activity_main.*
+import ru.ifr0z.fabuserlocation.example.databinding.MainActivityBinding
 
 class MainActivity : AppCompatActivity(), UserLocationObjectListener, CameraListener {
+
+    private lateinit var binding: MainActivityBinding
 
     private lateinit var userLocationLayer: UserLocationLayer
 
@@ -38,8 +40,10 @@ class MainActivity : AppCompatActivity(), UserLocationObjectListener, CameraList
     override fun onCreate(savedInstanceState: Bundle?) {
         MapKitFactory.setApiKey(mapKitApiKey)
         MapKitFactory.initialize(this)
-        setContentView(R.layout.activity_main)
         super.onCreate(savedInstanceState)
+        binding = MainActivityBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         checkPermission()
 
@@ -71,9 +75,9 @@ class MainActivity : AppCompatActivity(), UserLocationObjectListener, CameraList
 
     private fun userInterface() {
         val mapLogoAlignment = Alignment(LEFT, BOTTOM)
-        map_v.map.logo.setAlignment(mapLogoAlignment)
+        binding.mapView.map.logo.setAlignment(mapLogoAlignment)
 
-        user_location_fab.setOnClickListener {
+        binding.userLocationFab.setOnClickListener {
             if (permissionLocation) {
                 cameraUserPosition()
 
@@ -86,12 +90,12 @@ class MainActivity : AppCompatActivity(), UserLocationObjectListener, CameraList
 
     private fun onMapReady() {
         val mapKit = MapKitFactory.getInstance()
-        userLocationLayer = mapKit.createUserLocationLayer(map_v.mapWindow)
+        userLocationLayer = mapKit.createUserLocationLayer(binding.mapView.mapWindow)
         userLocationLayer.isVisible = true
         userLocationLayer.isHeadingEnabled = true
         userLocationLayer.setObjectListener(this)
 
-        map_v.map.addCameraListener(this)
+        binding.mapView.map.addCameraListener(this)
 
         cameraUserPosition()
 
@@ -101,11 +105,11 @@ class MainActivity : AppCompatActivity(), UserLocationObjectListener, CameraList
     private fun cameraUserPosition() {
         if (userLocationLayer.cameraPosition() != null) {
             routeStartLocation = userLocationLayer.cameraPosition()!!.target
-            map_v.map.move(
+            binding.mapView.map.move(
                 CameraPosition(routeStartLocation, 16f, 0f, 0f), Animation(SMOOTH, 1f), null
             )
         } else {
-            map_v.map.move(CameraPosition(Point(0.0, 0.0), 16f, 0f, 0f))
+            binding.mapView.map.move(CameraPosition(Point(0.0, 0.0), 16f, 0f, 0f))
         }
     }
 
@@ -125,11 +129,15 @@ class MainActivity : AppCompatActivity(), UserLocationObjectListener, CameraList
 
     private fun setAnchor() {
         userLocationLayer.setAnchor(
-            PointF((map_v.width * 0.5).toFloat(), (map_v.height * 0.5).toFloat()),
-            PointF((map_v.width * 0.5).toFloat(), (map_v.height * 0.83).toFloat())
+            PointF(
+                (binding.mapView.width * 0.5).toFloat(), (binding.mapView.height * 0.5).toFloat()
+            ),
+            PointF(
+                (binding.mapView.width * 0.5).toFloat(), (binding.mapView.height * 0.83).toFloat()
+            )
         )
 
-        user_location_fab.setImageResource(R.drawable.ic_my_location_black_24dp)
+        binding.userLocationFab.setImageResource(R.drawable.ic_my_location_black_24dp)
 
         followUserLocation = false
     }
@@ -137,7 +145,7 @@ class MainActivity : AppCompatActivity(), UserLocationObjectListener, CameraList
     private fun noAnchor() {
         userLocationLayer.resetAnchor()
 
-        user_location_fab.setImageResource(R.drawable.ic_location_searching_black_24dp)
+        binding.userLocationFab.setImageResource(R.drawable.ic_location_searching_black_24dp)
     }
 
     override fun onObjectAdded(userLocationView: UserLocationView) {
