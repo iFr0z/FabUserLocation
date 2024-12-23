@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace 'ru.ifr0z.fabuserlocation.example'
-    compileSdk 33
+    compileSdk 35
 
     defaultConfig {
         applicationId "ru.ifr0z.fabuserlocation.example"
-        minSdk 21
-        targetSdk 33
+        minSdk 26
+        targetSdk 35
         versionCode 1
         versionName "1.0"
     }
@@ -23,11 +23,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
     buildFeatures {
         viewBinding true
@@ -35,16 +35,16 @@ android {
 }
 
 dependencies {
-    implementation 'com.google.android.material:material:1.8.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
 
     /* lite version provides only map and some core services
      * full version provides the rest of maps API
      * routing, panoramas, search and etc.
-     * implementation 'com.yandex.android:maps.mobile:4.2.2-full'
+     * implementation 'com.yandex.android:maps.mobile:4.9.0-full'
      */
-    implementation 'com.yandex.android:maps.mobile:4.2.2-lite'
+    implementation 'com.yandex.android:maps.mobile:4.9.0-lite'
 
     //  Play Services [Location]
-    implementation "com.google.android.gms:play-services-location:20.0.0"
+    implementation "com.google.android.gms:play-services-location:21.3.0"
 }

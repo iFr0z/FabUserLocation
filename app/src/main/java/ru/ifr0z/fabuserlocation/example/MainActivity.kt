@@ -3,13 +3,16 @@ package ru.ifr0z.fabuserlocation.example
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.pm.PackageManager.PERMISSION_GRANTED
-import android.graphics.Color.BLUE
 import android.graphics.PointF
 import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.checkSelfPermission
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.Animation.Type.SMOOTH
 import com.yandex.mapkit.MapKitFactory
@@ -21,12 +24,14 @@ import com.yandex.mapkit.logo.VerticalAlignment.BOTTOM
 import com.yandex.mapkit.map.CameraListener
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.CameraUpdateReason
+import com.yandex.mapkit.map.IconStyle
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.user_location.UserLocationLayer
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
-import com.yandex.runtime.image.ImageProvider.fromResource
+import com.yandex.runtime.image.ImageProvider.fromBitmap
 import ru.ifr0z.fabuserlocation.example.databinding.MainActivityBinding
+import ru.ifr0z.fabuserlocation.example.util.custom.ImageProviderCustom
 
 class MainActivity : AppCompatActivity(), UserLocationObjectListener, CameraListener {
 
@@ -74,8 +79,17 @@ class MainActivity : AppCompatActivity(), UserLocationObjectListener, CameraList
     }
 
     private fun userInterface() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.userLocationFab) { view, windowInsets ->
+            val insets = windowInsets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            view.translationY = (-90).toFloat()
+            view.updatePadding(0, 0, 0, insets.bottom)
+            WindowInsetsCompat.CONSUMED
+        }
+
         val mapLogoAlignment = Alignment(LEFT, BOTTOM)
-        binding.mapView.map.logo.setAlignment(mapLogoAlignment)
+        binding.mapView.mapWindow.map.logo.setAlignment(mapLogoAlignment)
 
         binding.userLocationFab.setOnClickListener {
             if (permissionLocation) {
@@ -95,7 +109,7 @@ class MainActivity : AppCompatActivity(), UserLocationObjectListener, CameraList
         userLocationLayer.isHeadingEnabled = true
         userLocationLayer.setObjectListener(this)
 
-        binding.mapView.map.addCameraListener(this)
+        binding.mapView.mapWindow.map.addCameraListener(this)
 
         cameraUserPosition()
 
@@ -105,11 +119,11 @@ class MainActivity : AppCompatActivity(), UserLocationObjectListener, CameraList
     private fun cameraUserPosition() {
         if (userLocationLayer.cameraPosition() != null) {
             routeStartLocation = userLocationLayer.cameraPosition()!!.target
-            binding.mapView.map.move(
+            binding.mapView.mapWindow.map.move(
                 CameraPosition(routeStartLocation, 16f, 0f, 0f), Animation(SMOOTH, 1f), null
             )
         } else {
-            binding.mapView.map.move(CameraPosition(Point(0.0, 0.0), 16f, 0f, 0f))
+            binding.mapView.mapWindow.map.move(CameraPosition(Point(0.0, 0.0), 16f, 0f, 0f))
         }
     }
 
@@ -151,9 +165,15 @@ class MainActivity : AppCompatActivity(), UserLocationObjectListener, CameraList
     override fun onObjectAdded(userLocationView: UserLocationView) {
         setAnchor()
 
-        userLocationView.pin.setIcon(fromResource(this, R.drawable.user_arrow))
-        userLocationView.arrow.setIcon(fromResource(this, R.drawable.user_arrow))
-        userLocationView.accuracyCircle.fillColor = BLUE
+        val bitmap = ImageProviderCustom(this@MainActivity, R.drawable.ic_dot_rose_24dp).image
+
+        userLocationView.apply {
+            pin.setIcon(fromBitmap(bitmap))
+            pin.setIconStyle(IconStyle().setFlat(true))
+            arrow.setIcon(fromBitmap(bitmap))
+            arrow.setIconStyle(IconStyle().setFlat(true))
+            accuracyCircle.fillColor = ActivityCompat.getColor(this@MainActivity, R.color.colorAccuracyCircle)
+        }
     }
 
     override fun onObjectUpdated(p0: UserLocationView, p1: ObjectEvent) {}

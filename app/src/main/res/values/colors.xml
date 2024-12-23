@@ -5,4 +5,7 @@
     <color name="colorAccent">#D81B60</color>
 
     <color name="colorNull">#fafafa</color>
+
+    <color name="colorAccuracyCircle">#4Dc21460</color>
+    <color name="colorDot">#c21460</color>
 </resources>
