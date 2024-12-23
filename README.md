@@ -1,4 +1,4 @@
-# FabUserLocation
+# FabUserLocation🔗YandexMapKit
 
 [![API](https://img.shields.io/badge/API-26%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=26) 
 [![Medium](https://img.shields.io/badge/Medium-FabUserLocation🔗YandexMapKit-brightgreen.svg?style=flat)](https://medium.com/@ifr0z/fabuserlocation-yandexmapkit-b31f10ace135)
